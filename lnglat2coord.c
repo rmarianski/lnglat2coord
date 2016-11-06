@@ -15,7 +15,7 @@ bool parse_double(char *s, double *out) {
     char *t = s;
     double d = strtod(s, &t);
 
-    if (s != t) {
+    if (s != t && *t == 0) {
         result = true;
         *out = d;
     }
@@ -28,7 +28,7 @@ bool parse_zoom(char *s, unsigned int *out) {
     char *t = s;
     long int li = strtol(s, &t, 10);
 
-    if (s != t) {
+    if (s != t && *t == 0) {
         if (li >= 0 && li < 20) {
             result = true;
             *out = (unsigned int)li;
