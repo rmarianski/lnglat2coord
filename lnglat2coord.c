@@ -8,6 +8,8 @@ void die_with_usage(char *progname) {
     fprintf(stderr, "%s: z/x/y\n", progname);
 }
 
+#define die_if(cond, err_str, ...) if (cond) { fprintf(stderr, err_str, ##__VA_ARGS__); exit(EXIT_FAILURE); }
+
 bool parse_double(char *s, double *out) {
     double result = false;
     char *t = s;
@@ -46,18 +48,12 @@ int main(int argc, char *argv[]) {
 
         // NOTE: convert lng lat to coord
 
-        if (!parse_double(argv[1], &lng)) {
-            fprintf(stderr, "%s: Invalid longitude: %s\n", argv[0], argv[1]);
-            exit(EXIT_FAILURE);
-        }
-        if (!parse_double(argv[2], &lat)) {
-            fprintf(stderr, "%s: Invalid latitude: %s\n", argv[0], argv[2]);
-            exit(EXIT_FAILURE);
-        }
-        if (!parse_zoom(argv[3], &zoom)) {
-            fprintf(stderr, "%s: Invalid zoom: %s\n", argv[0], argv[3]);
-            exit(EXIT_FAILURE);
-        }
+        die_if(!parse_double(argv[1], &lng),
+               "%s: Invalid longitude: %s\n", progname, argv[1]);
+        die_if(!parse_double(argv[2], &lng),
+               "%s: Invalid latitude: %s\n", progname, argv[2]);
+        die_if(!parse_zoom(argv[3], &zoom),
+               "%s: Invalid zoom: %s\n", progname, argv[3]);
 
         futile_lnglat_to_coord(lng, lat, zoom, &coord);
         futile_coord_println(&coord, stdout);
@@ -66,10 +62,9 @@ int main(int argc, char *argv[]) {
 
         // NOTE: convert coord to lng lat
 
-        if (!futile_coord_deserialize(argv[1], &coord)) {
-            fprintf(stderr, "%s: invalid coord: %s\n", progname, argv[1]);
-            exit(EXIT_FAILURE);
-        }
+        die_if(!futile_coord_deserialize(argv[1], &coord),
+               "%s: invalid coord: %s\n", progname, argv[1]);
+
         futile_coord_to_lnglat(&coord, &lng, &lat);
         printf("%.16f %.16f\n", lng, lat);
 

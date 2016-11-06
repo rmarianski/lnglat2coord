@@ -8,5 +8,5 @@ $(P): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(P)
 
-install:
+install: $(P)
 	cp -f $(P) $(HOME)/opt/bin/$(P)
