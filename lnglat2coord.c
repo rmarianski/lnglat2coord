@@ -40,22 +40,22 @@ bool parse_zoom(char *s, unsigned int *out) {
 
 int main(int argc, char *argv[]) {
     char *progname = argv[0];
-    double lng, lat;
     unsigned int zoom;
     futile_coord_s coord;
+    futile_point_s lnglat;
 
     if (argc == 4) {
 
         // NOTE: convert lng lat to coord
 
-        die_if(!parse_double(argv[1], &lng),
+        die_if(!parse_double(argv[1], &lnglat.x),
                "%s: Invalid longitude: %s\n", progname, argv[1]);
-        die_if(!parse_double(argv[2], &lng),
+        die_if(!parse_double(argv[2], &lnglat.y),
                "%s: Invalid latitude: %s\n", progname, argv[2]);
         die_if(!parse_zoom(argv[3], &zoom),
                "%s: Invalid zoom: %s\n", progname, argv[3]);
 
-        futile_lnglat_to_coord(lng, lat, zoom, &coord);
+        futile_lnglat_to_coord(&lnglat, zoom, &coord);
         futile_coord_println(&coord, stdout);
 
     } else if (argc == 2) {
@@ -65,8 +65,9 @@ int main(int argc, char *argv[]) {
         die_if(!futile_coord_deserialize(argv[1], &coord),
                "%s: invalid coord: %s\n", progname, argv[1]);
 
-        futile_coord_to_lnglat(&coord, &lng, &lat);
-        printf("%.16f %.16f\n", lng, lat);
+        futile_point_s lnglat;
+        futile_coord_to_lnglat(&coord, &lnglat);
+        printf("%.16f %.16f\n", lnglat.x, lnglat.y);
 
     } else {
         die_with_usage(progname);
