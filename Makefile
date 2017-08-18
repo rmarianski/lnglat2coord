@@ -1,7 +1,7 @@
 P=lnglat2coord
 OBJECTS=$(P).o
 CFLAGS = -g -Wall -std=gnu11 -pedantic -O3 `pkg-config --cflags futile`
-LDLIBS = `pkg-config --libs futile`
+LDLIBS = `pkg-config --libs futile` -lm
 
 $(P): $(OBJECTS)
 
